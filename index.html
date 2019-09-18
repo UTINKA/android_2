@@ -1,0 +1,244 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Android</title>
+
+		<!--meta name="Access-Control-Allow-Origin" content="*" /-->
+		<!--meta name="Access-Control-Allow-Headers" content="*" /-->
+		
+		<link rel="shortcut icon" href="favicon.png">
+
+		<link rel="stylesheet" href="css/font.css" type="text/css" />
+		<link rel="stylesheet" href="css/icons.css" type="text/css" />
+		<link rel="stylesheet" href="css/ripple-effect.css" type="text/css" />
+		<link rel="stylesheet" href="css/loader.css" type="text/css" />
+		<link rel="stylesheet" href="index.css">
+		
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript" src="js/jquery.ui.js"></script>
+		<!--script type="text/javascript" src="js/jquery.touchSwipe.js"></script-->
+		<script type="text/javascript" src="js/jquery.mousewheel.js"></script>
+		<script type="text/javascript" src="js/ripple-effect.js"></script>
+		<script type="text/javascript" src="js/system_base.js"></script>
+	</head>
+	<body>
+		<div class="mobile" state="">
+			<div class="Sounds" style="display:none;">
+				<audio class="SystemAudio" preload="auto" style="display:none;"></audio>
+				<audio class="NotyfiAudio" preload="auto" style="display:none;"></audio>
+				<audio class="AudioPlayer" preload="auto" style="display:none;"></audio>
+			</div>
+			<div class="model">
+				<div class="m_top">
+					<div class="m_speaker"></div>
+					<div class="m_camera"></div>
+				</div>
+				<div class="m_left">
+					<div class="m_volume_up"></div>
+					<div class="m_volume_down"></div>
+				</div>
+				<div class="m_right">
+					<div class="m_power"></div>
+				</div>
+				<div class="m_display">
+					<div class="off_screen"></div>
+					<video class="bootanimation"></video>
+					<!----------------------------------->
+					<div class="up_block">
+						<div class="upb_info_block">
+							<left>
+								<span id="up_in_time_upb">00:00</span>
+							</left>
+							<right>
+								<i class="material-icons">network_cell</i>
+								<i class="material-icons">battery_full</i><span>100%</span>
+							</right>
+							<containermin>
+								<a class="up_in_contmin_set ripple-effect" check="false"><i class="material-icons">wifi</i></a>
+								<a class="up_in_contmin_set ripple-effect" check="false"><i class="material-icons">bluetooth</i></a>
+								<a class="up_in_contmin_set ripple-effect" check="false"><i class="material-icons">location_on</i></a>
+								<a class="up_in_contmin_set ripple-effect" check="false"><i class="material-icons">vibration</i></a>
+								<a class="up_in_contmin_set ripple-effect" check="false"><i class="material-icons">tap_and_play</i></a>
+								<a class="up_in_contmin_set ripple-effect" check="false"><i class="material-icons">stay_current_portrait</i></a>
+								<timeleft>
+									<span id="up_in_date_upb">00 0 0000</span>
+								</timeleft>
+							</containermin>
+						</div>
+						<div class="upb_info_notify_min">
+							<!--div class="notyfi">
+								<img src="res_apps/icons_64/google_chrome.png">
+								<label>+1</label>
+							</div>
+							<div class="notyfi">
+								<img src="res_apps/icons_64/google_play.png">
+								<label>+3</label>
+							</div-->
+						</div>
+						<!--div class="notify_blocks">
+							<div class="notification" app_info_notify="">
+								<img src="res_apps/icons_64/google_chrome.png">
+								<label>Title</label>
+								<p>Content</p>
+							</div>
+						</div-->
+					</div>
+					<!----------------------------------->
+					<div class="lock_screen">
+						<center>
+							<label>00:00</label>
+							<text>00 00 0000</text>
+						</center>
+						<!----------------------------------->
+						<div class="ls_media_data">
+							<label></label>
+							<text></text>
+							<div class="lsmd_buttons">
+                                <a class="back"><i class="material-icons">skip_previous</i></a>
+								<a class="play_pause"><i class="material-icons">play_arrow</i>
+								</a><a class="next"><i class="material-icons">skip_next</i></a>
+							</div>
+						</div>
+						<!----------------------------------->
+						<div class="ls_controls">
+							<a class="ls_phone_icon"><i class="left material-icons">phone</i></a>
+							<a class="ls_lock_icon"><i class="material-icons">lock_open</i></a>
+							<a class="ls_camera_icon"><i class="material-icons">camera_alt</i></a>
+						</div>
+					</div>
+					<!----------------------------------->
+					<div class="display_apps" showed="">
+						<div class="recent_apps" state="false">
+							<div class="bg"><div></div></div>
+							
+							<div class="buttons_down">
+								<a class="clear_all_apps" state="false"><i class="material-icons">close</i></a>
+							</div>
+						</div>
+						<div class="app" app_name="" state="hided"></div>
+					</div>
+					<!----------------------------------->
+					<div class="status_bar">
+						<div class="sb">
+							<text class="time">00:00</text>
+							<text class="notyfication_text"></text>
+						</div>
+						<div class="sb_right">
+							<i class="material-icons">network_cell</i>
+							<i class="material-icons">battery_full</i>
+						</div>
+					</div>
+					<!----------------------------------->
+					<div class="notifications_display">
+						<div class="n_background"></div>
+						<div class="n_buttons">
+							<a class="n_btn ripple-effect" state="false"><i class="material-icons">wifi</i></a>
+							<a class="n_btn ripple-effect" state="false"><i class="material-icons">bluetooth</i></a>
+							<a class="n_btn ripple-effect" state="false"><i class="material-icons">location_on</i></a>
+							<a class="n_btn ripple-effect" state="false"><i class="material-icons">vibration</i></a>
+							<a class="n_btn ripple-effect" state="false"><i class="material-icons">tap_and_play</i></a>
+							<a class="n_btn ripple-effect" state="false"><i class="material-icons">stay_current_portrait</i></a>
+						</div>
+					</div>
+					<!----------------------------------->
+					<div class="controls">
+						<a class="back ripple-effect" key="back"><i class="material-icons">details</i></a>
+						<a class="home ripple-effect" key="home"><i class="material-icons">panorama_fish_eye</i></a>
+						<a class="recent_apps ripple-effect" key="recent_apps"><i class="material-icons">crop_din</i></a>
+					</div>
+					<!----------------------------------->
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="js/system.js"></script>
+	<script type="text/javascript" src="js/system_controls.js"></script>
+	<script>	
+	$(document).ready(function() 
+	{
+		android.GetData(android.location_device + 'system/configurations/boot.txt').then(result => 
+		{
+			var data = android.Data.prototype.DataToObject(result);
+			android.boot_animation_startup = data.boot_animation_startup;
+			android.boot_animation_shutdown = data.boot_animation_shutdown;
+			//
+			$('.mobile .model .m_display .bootanimation')[0].src = android.boot_animation_startup;
+		});	
+
+		//
+		var 
+			up_block = false,
+			up_block_full = false
+		;
+		$('.mobile .model .m_display .status_bar').mousedown(function() { up_block = true; });
+		$('.mobile .model .m_display .status_bar').mouseup(function(){ up_block = false; });
+		$('body').mousemove(function(e) 
+		{
+			var move_Y = e.clientY-65;
+			if(up_block == true)
+			{
+				if(move_Y >= (100 + 25)) move_Y = (100 + 25), up_block = false;
+				$('.up_block').css({ 'opacity':'1', 'display':'block', 'height':'' + move_Y + 'px' });
+			}
+			if(up_block_full == true)
+			{
+				if(move_Y >= 400) move_Y = 400, up_block_full = false;
+				$('.up_block').css({ 'opacity':'1', 'display':'block', 'height':'' + move_Y + 'px'});
+			}
+			if(up_block == true || up_block_full == true)
+			{
+				var opacity_a, opacity_b, countdown = 20;
+				if(move_Y < countdown)
+				{
+					if(move_Y < countdown-1) opacity_a = '0.9', opacity_b = '0.1';
+					if(move_Y < countdown-2) opacity_a = '0.8', opacity_b = '0.2';
+					if(move_Y < countdown-3) opacity_a = '0.7', opacity_b = '0.3';
+					if(move_Y < countdown-4) opacity_a = '0.6', opacity_b = '0.4';
+					if(move_Y < countdown-5) opacity_a = '0.5', opacity_b = '0.5';
+					if(move_Y < countdown-6) opacity_a = '0.4', opacity_b = '0.6';
+					if(move_Y < countdown-7) opacity_a = '0.3', opacity_b = '0.7';
+					if(move_Y < countdown-8) opacity_a = '0.2', opacity_b = '0.8';
+					if(move_Y < countdown-9) opacity_a = '0.1', opacity_b = '0.9';
+					if(move_Y < countdown-10) opacity_a = '0', opacity_b = '1';
+					$('.up_block').css('opacity',''+opacity_a+'');
+					$('.mobile .model .m_display .status_bar').css('opacity',''+opacity_b+'');
+				}
+			}
+			if($('.up_block').css('height') == '0' || $('.up_block').css('height') == '0px')
+			{
+				up_block = false, up_block_full = false;  
+				$('.up_block').css({ 'opacity':'0', 'height':'0px' });
+			}
+		});
+		$('.up_block').mousedown(function() 
+		{ 
+			if($('.mobile .model .m_display').css('width') == '320px') up_block_full = true; 
+			else if($('.mobile .model .m_display').css('width') != '320px') 
+			{
+				up_block = true;
+				$('.up_block').css({'height' : '109px'});
+			}
+		}).children().mousedown(function(e) { e.stopPropagation(); });
+		$('.up_block').mouseleave(function()
+		{ 
+			if(up_block_full == true && $('.up_block').css('height') == '0px')
+			{
+				up_block = false, up_block_full = false; 
+				$('.up_block').css({ 'opacity':'0', 'height':'0px' });
+			}
+		});
+		$('.mobile .model .m_display .status_bar').mouseenter(function()
+		{
+			if(up_block_full == true && up_block == true)
+			{
+				up_block = false, up_block_full = false; 
+				$('.up_block').css({ 'opacity':'0', 'height':'0px' });
+			}
+		});
+		
+		
+	});
+	
+	</script>
+</html>

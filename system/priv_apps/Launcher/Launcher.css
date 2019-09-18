@@ -1,0 +1,164 @@
+.home_app{
+	width: 100%;
+    height: 100%;
+    position: relative;
+}
+.home_app .hp_head{
+	padding-top: 30px;
+    color: #ffffff;
+}
+.home_app .hp_head center{
+	position: relative;
+	text-shadow: 0px 1px 5px rgba(0, 0, 0, 1);
+}
+.home_app .hp_head center text{
+	position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    width: 35%;
+    margin: 0 auto;
+    text-align: left;
+}
+.home_app .hp_head center text img{
+	position: absolute;
+    top: -5px;
+    right: 0;
+    width: 30px;
+    height: auto;
+}
+.home_app .hp_down{
+	position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding-top: 60px;
+    text-align: center;
+}
+
+.home_app .hp_down .apps_user{
+	position: absolute;
+    top: 0;
+    width: 100%;
+    padding: 10px 0;
+}
+.home_app .hp_down .apps_user .hp_menu_open{
+	width: 40px;
+	height: 40px;
+	color: rgba(0, 0, 0, 0.5);
+	background: #ffffff;
+	cursor: default;
+	user-select: none;
+    position: relative;
+    display: inline-block;
+    text-align: center;
+	border-radius: 50%;
+	z-index: 2;
+	transition: 0.5s;
+}
+.home_app .hp_down .apps_user .hp_menu_open .one{
+	cursor: default;
+	user-select: none;
+	position: absolute;
+    top: 0px;
+    left: 0;
+    padding-left: 4px;
+    font-size: 32px;
+}
+.home_app .hp_down .apps_user .hp_menu_open .two{
+	cursor: default;
+	user-select: none;
+	position: absolute;
+    bottom: 0px;
+    left: 0;
+    padding-left: 4px;
+    font-size: 32px;
+}
+.home_app .hp_box_menu{
+	position: absolute;
+    top: calc(91% - -10px);
+    left: calc(46% - -10px);
+    right: calc(46% - -10px);
+    bottom: calc(3% - -10px);
+    background: #ffffff;
+	z-index: 1;
+	border-radius: 50%;
+	overflow: hidden;
+    transition: 0.3s;
+}
+.home_app .hp_box_menu a{
+	display: inline-block;
+    position: relative;
+    width: 72px;
+    margin-left: 0.3px;
+    height: 70px;
+    padding-bottom: 10px;
+	transition: 0.3s;
+}
+.home_app .hp_box_menu a[hided=true]{
+	opacity: 0;
+	display: none;
+}
+
+.home_app .hp_box_menu a img{
+	position: absolute;
+    width: 50px;
+    padding: 5px 12px;
+	border-radius: 50%;
+}
+.home_app .hp_box_menu a label{
+	position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.7);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.home_app .hp_content{
+	position: absolute;
+    top: 80px;
+    left: 0;
+    right: 0;
+    bottom: 60px;
+    /*background: #00000070;*/
+}
+
+.home_app .hp_content .hpc_page{
+	
+}
+
+.home_app .hp_content .hpc_page a{
+    display: inline-block;
+    position: relative;
+    width: 72px;
+    margin-left: 0.3px;
+    height: 70px;
+    padding-bottom: 10px;
+    transition: 0.3s;
+}
+
+.home_app .hp_content .hpc_page a img{
+	position: absolute;
+    width: 50px;
+    padding: 5px 12px;
+    border-radius: 50%;
+}
+
+.home_app .hp_content .hpc_page a label{
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    font-size: 13px;
+    color: rgb(255, 255, 255);
+    text-shadow: 0px 0px 3px rgb(0, 0, 0);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+

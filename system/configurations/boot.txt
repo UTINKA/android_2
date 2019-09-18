@@ -1,0 +1,4 @@
+({
+	"boot_animation_startup"	:	"system/boot/boot_start.mp4",
+	"boot_animation_shutdown"	:	"system/boot/boot_shutdown.mp4",
+})

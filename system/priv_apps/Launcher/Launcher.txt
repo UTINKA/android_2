@@ -1,0 +1,5 @@
+﻿({
+	"app_name":"Launcher",
+	"color":"transparent",
+	"hided":"true"
+})

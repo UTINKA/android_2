@@ -1,0 +1,5 @@
+﻿({
+	"app_name":"Настройки",
+	"color":"#0063cc",
+	"hided":"false"
+})

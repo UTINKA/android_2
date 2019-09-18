@@ -1,0 +1,5 @@
+﻿({
+	"app_name":"Музыка",
+	"color":"#cc0048",
+	"hided":"false"
+})
