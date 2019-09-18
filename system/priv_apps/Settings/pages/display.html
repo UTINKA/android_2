@@ -198,19 +198,10 @@
 		$('.s_block_open_content .walls_set_alert').css('display','block');
 			setTimeout(function()
 			{
-				var walls = android.Data.prototype.DataToObject('["\
-				system\/walls\/0.jpg",\
-				"system\/walls\/1.jpg",\
-				"system\/walls\/2.jpg",\
-				"system\/walls\/3.jpg",\
-				"system\/walls\/4.jpg",\
-				"system\/walls\/5.jpg",\
-				"system\/walls\/6.jpg",\
-				"system\/walls\/7.jpg",\
-				"system\/walls\/8.jpg"\
-				]');
+				var walls = android.Data.prototype.DataToObject('["system\/walls\/0.jpg","system\/walls\/1.jpg","system\/walls\/2.jpg","system\/walls\/3.jpg","system\/walls\/4.jpg","system\/walls\/5.jpg","system\/walls\/6.jpg","system\/walls\/7.jpg","system\/walls\/8.jpg"]');
 				$('.s_block_open_content .walls_set_alert .wsa_content .wsac').html('');
-				for(var cwalls = 0; cwalls < walls.length; cwalls++)
+				var cwalls = 0;
+				while(cwalls < walls.length)
 				{
 					var url = walls[cwalls];
 					if(url == android.UI.getCurrentWall())
@@ -229,6 +220,7 @@
 							</div>\
 						');
 					}
+					cwalls++;
 				}
 				/*$('.s_block_open_content .walls_set_alert .wsa_content .wsac').append('\
 					<div class="wall" data="" style="background: url() 50% 0% / cover no-repeat rgb(0, 0, 0);">\
