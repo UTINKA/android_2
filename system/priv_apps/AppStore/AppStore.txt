@@ -1,0 +1,5 @@
+﻿({
+	"app_name":"App Store",
+	"color":"#006c4a",
+	"hided":"false"
+})

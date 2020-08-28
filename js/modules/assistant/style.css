@@ -1,0 +1,133 @@
+.mobile .model .m_display .controls a i{
+    padding: 8px;
+	transition: 0.3s;
+}
+
+
+.mobile .model .m_display .controls .home:active i{
+	opacity: 0;
+    transform: scale(0.5);
+}
+
+.mobile .model .m_display .controls .home .assist_blue,
+.mobile .model .m_display .controls .home .assist_red,
+.mobile .model .m_display .controls .home .assist_yellow,
+.mobile .model .m_display .controls .home .assist_green
+{
+	position: absolute;
+	opacity: 0;
+	width: 12px;
+    height: 12px;
+	transform: scale(0.7);
+	border-radius: 50%;
+	transition: 0.3s;
+    transition-property: top,left,right,bottom;
+}
+.mobile .model .m_display .controls .home .assist_blue{
+    top: calc(100% / 2.9);
+    left: 14px;
+    background: #4286f4;
+}
+.mobile .model .m_display .controls .home .assist_red{
+    top: 1px;
+    left: calc(100% / 2.45);
+    background: #e94336;
+}
+.mobile .model .m_display .controls .home .assist_yellow{
+    bottom: 1px;
+    left: calc(100% / 2.45);
+    background: #fcbc05;
+}
+.mobile .model .m_display .controls .home .assist_green{
+	position: absolute;
+    top: calc(100% / 2.9);
+	right: 14px;
+    background: #34a952;
+}
+
+.mobile .model .m_display .controls .home:active .assist_blue{
+	opacity: 1;
+	top: calc(100% / 2.9);
+    left: 3px;
+}
+.mobile .model .m_display .controls .home:active .assist_red{
+	opacity: 1;
+	top: calc(100% / 2.9);
+    left: calc(12px + 7px);
+}
+.mobile .model .m_display .controls .home:active .assist_yellow{
+	opacity: 1;
+	bottom: calc(100% / 2.9);
+    left: calc(24px + 10px);
+}
+.mobile .model .m_display .controls .home:active .assist_green{
+	opacity: 1;
+	top: calc(100% / 2.9);
+    right: 3px;
+}
+
+.mobile .model .m_display .display_apps .assistent{
+	opacity: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0));
+    z-index: 100;
+	transition: 0.5s;
+}
+.mobile .model .m_display .display_apps .assistent[state=false]{
+	opacity: 0;
+    z-index: -10;
+}
+.mobile .model .m_display .display_apps .assistent .content_main{
+	position: absolute;
+    left: 0;
+    right: 0;
+	bottom: calc(-100% / 2 - 5px);
+    height: calc(100% / 2);
+    background: #eee;
+    z-index: 0;
+	margin: 0;
+    transition: 0.5s;
+}
+.mobile .model .m_display .display_apps .assistent[state=true] .content_main{
+	left: 0;
+    right: 0;
+    bottom: 40px;
+    height: calc(100% / 2);
+    border-radius: 5px 5px 0 0;
+    box-shadow: 0px -3px 20px 20px rgba(0, 0, 0, 0.1);
+}
+
+.mobile .model .m_display .display_apps .assistent .down_color{
+	position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: #b1b1b1;
+	margin: 0;
+    transition: 0.5s;
+}
+
+.mobile[state=one] .model .m_display .display_apps .assistent .content_main,
+.mobile[state=one] .model .m_display .display_apps .assistent .down_color
+{
+	width: 328px;
+    margin: 0 auto;	
+}
+
+.mobile[state=two] .model .m_display .display_apps .assistent .content_main,
+.mobile[state=two] .model .m_display .display_apps .assistent .down_color
+{
+	width: calc(100% / 2);
+    margin: 0 auto;	
+}
+
+
+
+
+
+

@@ -15,7 +15,11 @@ sab.find('.s_content').find('.s_block').click(function(e)
 		//
 		sab_scroll = sab.scrollTop();
 		sab.scrollTop(0);
-		sab_head.css('top', '-40px');
+		sab_head.css({
+			'top': '-40px',
+			'color': '#007cff'
+		});
+		
 		sab.css({
 			'overflow-y': 'hidden',
 			'top': '-40px',
@@ -66,7 +70,10 @@ sab.find('.s_content').find('.s_block').click(function(e)
 	}
 	else if(sab_page != 'null')
 	{
-		sab_head.css('top', '0');
+		sab_head.css({
+			'top': '0px',
+			'color': '#ffffff'
+		});
 		sab.css({
 			'overflow-y': 'auto',
 			'top': '0',
@@ -115,7 +122,10 @@ android.Apps.InitApp('Settings', function() // Update Second
 	{
 		if(sab_page != 'null')
 		{
-			sab_head.css('top', '0');
+			sab_head.css({
+				'top': '0px',
+				'color': '#ffffff'
+			});
 			sab.css({
 				'overflow-y': 'auto',
 				'top': '0',
@@ -167,6 +177,9 @@ android.Apps.InitApp('Settings', function() // Update Second
 {
 	
 }, function() // Closed
+{
+	
+}, function(Screen) // Screen
 {
 	
 });

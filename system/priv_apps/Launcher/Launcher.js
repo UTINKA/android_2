@@ -19,9 +19,9 @@ var lat, long, temp = 0, locatInfo = '';
 
 /*if (navigator.geolocation) 
 {
-	navigator.geolocation.getCurrentPosition(function (position) 
-	{*/
-		/*lat = 54.62921524047852;
+	//navigator.geolocation.getCurrentPosition(function (position) 
+	//{
+		lat = 54.62921524047852;
 		long = 39.73637390136719;
 
 		var api = 'https://fcc-weather-api.glitch.me/api/current?lat=' + lat + '&lon=' + long + '';
@@ -53,8 +53,8 @@ var lat, long, temp = 0, locatInfo = '';
 				}
 			});
 
-		});*/
-	/*});
+		});
+	//});
 }*/
 
 var 
@@ -125,7 +125,25 @@ function LoadMenuApps()
 								{
 									android.Media.play(android.Media.SYSTEM_AUDIO, 'system/media/ui/Effect_Tick.mp3');
 									HomeAppCloseMenu();
-									android.Apps.openApp(dname, android.Apps.USERAPP);
+									android.Apps.openApp(app, android.Apps.USERAPP);
+									/*var obj = $(this);
+									var NewOpen = true;
+									$(".mobile .model .m_display .display_apps .app").each(function(e)
+									{
+										var obja = $(this);
+										if(obja.attr('app_name') != obj.attr('data'))
+										{
+											android.Media.play(android.Media.SYSTEM_AUDIO, 'system/media/ui/Effect_Tick.mp3');
+											HomeAppCloseMenu();
+											return OpenApp(obj, app, android.Apps.USERAPP);
+										}
+										else
+										{
+											android.Media.play(android.Media.SYSTEM_AUDIO, 'system/media/ui/Effect_Tick.mp3');
+											HomeAppCloseMenu();
+											return android.Apps.openApp(app, android.Apps.USERAPP);
+										}
+									});*/
 								});
 							});
 						});
@@ -163,6 +181,24 @@ function LoadMenuApps()
 									android.Media.play(android.Media.SYSTEM_AUDIO, 'system/media/ui/Effect_Tick.mp3');
 									HomeAppCloseMenu();
 									android.Apps.openApp(app, android.Apps.SYSAPP);
+									/*var obj = $(this);
+									var NewOpen = true;
+									$(".mobile .model .m_display .display_apps .app").each(function(e)
+									{
+										var obja = $(this);
+										if(obja.attr('app_name') != obj.attr('data'))
+										{
+											android.Media.play(android.Media.SYSTEM_AUDIO, 'system/media/ui/Effect_Tick.mp3');
+											HomeAppCloseMenu();
+											return OpenApp(obj, app, android.Apps.SYSAPP);
+										}
+										else
+										{
+											android.Media.play(android.Media.SYSTEM_AUDIO, 'system/media/ui/Effect_Tick.mp3');
+											HomeAppCloseMenu();
+											return android.Apps.openApp(app, android.Apps.SYSAPP);
+										}
+									});*/
 								});
 							});
 						});
@@ -171,6 +207,69 @@ function LoadMenuApps()
 			}
 		});
 	});
+
+	function OpenApp(obj, AppName,IsApp)
+	{
+		var strAppDir = undefined;
+		if(IsApp == android.Apps.SYSAPP) strAppDir = 'priv_apps';
+		else if(IsApp == android.Apps.USERAPP) strAppDir = 'apps';
+		android.GetData(android.location_device + 'system/' + strAppDir + '/' + AppName + '/' + AppName + '.txt').then(result => 
+		{
+			var AppColor = undefined;
+			var data = android.Data.prototype.DataToObject(result);
+			if(data.color != undefined && data.color != '')
+			{
+				if(data.color != 'transparent')
+				{
+					AppColor = data.color;
+				}
+			}
+			var pTop = obj.position().top;
+			var pLeft = obj.position().left;
+			$('.mobile .model .m_display .display_apps .loader_apps').css('transition','0.5s');
+			$('.mobile .model .m_display .display_apps .loader_apps .box img').attr('src', obj.find('img').attr('src'));
+			$('.mobile .model .m_display .display_apps .loader_apps').css({
+				'background': AppColor,
+				'width': '50px',
+				'height': '50px',
+				'top': 'calc(30px + ' + pTop + 'px)',
+				'left': 'calc(17px + ' + pLeft + 'px)',
+				'transform': 'scale(0.5)',
+				'border-radius': '50%',
+				'display': 'block'
+			});
+			$('.mobile .model .m_display .display_apps .loader_apps .box').css({
+				'width': '100%',
+				'margin': 'unset'
+			});
+			// Opening App
+			setTimeout(function()
+			{
+				$('.mobile .model .m_display .display_apps .loader_apps').css({
+					'width': '100%',
+					'height': '100%',
+					'top': '0',
+					'left': '0',
+					'right': '0',
+					'bottom': '0',
+					'transform': 'scale(1)',
+					'border-radius': '0%',
+					'display': 'block'
+				});
+				$('.mobile .model .m_display .display_apps .loader_apps .box').css({
+					'width': '100px',
+					'margin': 'calc(100% / 2 + 55px) auto'
+				});
+				setTimeout(function()
+				{
+					$('.mobile .model .m_display .display_apps .loader_apps').css('transition','0s');
+					android.Media.play(android.Media.SYSTEM_AUDIO, 'system/media/ui/Effect_Tick.mp3');
+					HomeAppCloseMenu();
+					android.Apps.openApp(AppName, IsApp);
+				}, 500);
+			}, 100);
+		});
+	}
 
 	function GetNextLevel(level) 
 	{
@@ -184,6 +283,8 @@ function LoadMenuApps()
 	};
 }
 LoadMenuApps();
+
+
 
 function HomeAppCloseMenu()
 {
@@ -228,6 +329,22 @@ android.Apps.InitApp('Launcher', function(app) // Update Second
 	HeadText.text(DFW);
 	$('.hp_head').find('center').find('text').html(locatInfo)
 	
+	$(".mobile .model .m_display .display_apps .app").each(function(e)
+	{
+		var obj = $(this);
+		if(obj.attr('app_name') == android.Memory.prototype.getData('HomeApp','Launcher'))
+		{
+			obj.find('app_content').css({
+				'background': 'url('+ android.UI.getCurrentWall() +')',
+				'background-position-x': 'center',
+				'background-position-y': 'top',
+				'background-size': 'cover',
+				'background-repeat': 'no-repeat',
+				'background-color': '#000000'
+			});
+		}
+	});
+	
 }, function(key) // System Controls
 {
 	if(key == android.Controls.Back)
@@ -242,14 +359,38 @@ android.Apps.InitApp('Launcher', function(app) // Update Second
 	{
 
 	}
-}, function() // Open
+}, function() // Open 
 {
 	
-}, function() // hided 
+}, function() // Hided 
 {
 	
-}, function()
+}, function() // Closed  
 {
 	
+}, function(Screen) // Screen
+{
+	if(Screen.IsLocked == false) // UnLocked
+	{
+		$(".mobile .model .m_display .display_apps .app").each(function(e)
+		{
+			var obj = $(this);
+			if(obj.attr('app_name') == android.Memory.prototype.getData('HomeApp','Launcher'))
+			{
+				obj.find('.home_app').css('transform','scale(1)');
+			}
+		});
+	}
+	else // Locked
+	{
+		$(".mobile .model .m_display .display_apps .app").each(function(e)
+		{
+			var obj = $(this);
+			if(obj.attr('app_name') == android.Memory.prototype.getData('HomeApp','Launcher'))
+			{
+				obj.find('.home_app').css('transform','scale(5)');
+			}
+		});
+	}
 });
 

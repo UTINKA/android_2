@@ -12,7 +12,7 @@
 	top: 0;
 	width: 100%;
     height: calc(100% - 40px);
-    background: #eee;
+    background: #ffffff;
 	overflow-y: auto;
 	transition: 0.2s;
 }
@@ -29,13 +29,12 @@
 	position: relative;
     display: block;
     margin: 5px;
-    height: 40px;
-    background: #fff;
-    border-radius: 2px;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    height: 45px;
     text-align: center;
-	z-index:3;
-	transition: 0.2s;
+	background: #ffffff;
+	border-radius: 5px;
+    z-index: 3;
+    transition: 0.2s;
 }
 .settings_app .s_content .s_block .ripl {
     background: rgba(0, 124, 255, 0.3);

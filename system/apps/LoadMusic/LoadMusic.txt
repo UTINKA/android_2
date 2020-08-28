@@ -1,0 +1,5 @@
+﻿({
+	"app_name":"LoadMusic",
+	"color":"#cc0048",
+	"hided":"false"
+})

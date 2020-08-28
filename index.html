@@ -94,11 +94,16 @@
 						<div class="ls_media_data">
 							<label></label>
 							<text></text>
-							<div class="lsmd_buttons">
+							<div class="lsmd_buttons" mcl="null">
                                 <a class="back"><i class="material-icons">skip_previous</i></a>
 								<a class="play_pause"><i class="material-icons">play_arrow</i>
 								</a><a class="next"><i class="material-icons">skip_next</i></a>
 							</div>
+						</div>
+						<div class="ls_media_data_BGImage"></div>
+						<div class="ls_media_data_img_style" style="position: absolute; border-radius: 50%; 
+						top: 0; left: 0; right: 0; bottom: 0; margin: 0 auto;">
+							<div class="ls_media_data_Image"></div>
 						</div>
 						<!----------------------------------->
 						<div class="ls_controls">
@@ -114,6 +119,12 @@
 							
 							<div class="buttons_down">
 								<a class="clear_all_apps" state="false"><i class="material-icons">close</i></a>
+							</div>
+						</div>
+						<div class="loader_apps">
+							<div class="box">
+								<img src="">
+								<label></label>
 							</div>
 						</div>
 						<div class="app" app_name="" state="hided"></div>
@@ -144,17 +155,33 @@
 					<!----------------------------------->
 					<div class="controls">
 						<a class="back ripple-effect" key="back"><i class="material-icons">details</i></a>
-						<a class="home ripple-effect" key="home"><i class="material-icons">panorama_fish_eye</i></a>
+						<a class="home ripple-effect" key="home">
+							<i class="material-icons">panorama_fish_eye</i>
+						</a>
 						<a class="recent_apps ripple-effect" key="recent_apps"><i class="material-icons">crop_din</i></a>
 					</div>
 					<!----------------------------------->
 				</div>
 			</div>
 		</div>
+		<div class="HelpWindow">
+			<p>
+				Что бы начать пользоваться телефоном,<br/>
+				Используйте клавишу справа телефона, нажмите и удеживайте пару секунд.<br/>
+				Как увидите что пошла загрузка на экране можно отпустить кнопку питания.
+				<button>Okay</button>
+			</p>
+			<script type="text/javascript" src="js/HelpWindow.js"></script>
+		</div>
 	</body>
 	<script type="text/javascript" src="js/system.js"></script>
 	<script type="text/javascript" src="js/system_controls.js"></script>
 	<script>	
+	var 
+		up_block = false,
+		up_block_full = false
+	;
+
 	$(document).ready(function() 
 	{
 		android.GetData(android.location_device + 'system/configurations/boot.txt').then(result => 
@@ -167,10 +194,6 @@
 		});	
 
 		//
-		var 
-			up_block = false,
-			up_block_full = false
-		;
 		$('.mobile .model .m_display .status_bar').mousedown(function() { up_block = true; });
 		$('.mobile .model .m_display .status_bar').mouseup(function(){ up_block = false; });
 		$('body').mousemove(function(e) 

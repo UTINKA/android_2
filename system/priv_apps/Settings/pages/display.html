@@ -15,10 +15,12 @@
     height: 100%;
     text-align: center;
     background: rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(0px);
 	transition: 0.2s;
 }
 .s_block_open_content .walls_block .cur_wall_sys a:hover{
 	opacity: 1;
+	backdrop-filter: blur(2px);
 }
 .s_block_open_content .walls_block .cur_wall_sys a label{
 	transform: scale(0);
@@ -196,18 +198,20 @@
 		$('.s_block_open_content .walls_set_alert .wsa_content .wsac').css('bottom','0px');
 				$('.s_block_open_content .walls_set_alert .wsa_content .wsa_controls').css('bottom', '-40px');
 		$('.s_block_open_content .walls_set_alert').css('display','block');
+		android.GetData(android.location_device + 'php/walls.php?getWalls').then(result => 
+		{
 			setTimeout(function()
 			{
-				var walls = android.Data.prototype.DataToObject('["system\/walls\/0.jpg","system\/walls\/1.jpg","system\/walls\/2.jpg","system\/walls\/3.jpg","system\/walls\/4.jpg","system\/walls\/5.jpg","system\/walls\/6.jpg","system\/walls\/7.jpg","system\/walls\/8.jpg"]');
+				//var walls = android.Data.prototype.DataToObject(result);
+				var walls = android.Data.prototype.DataToObject('["..\/system\/walls\/0.jpg","..\/system\/walls\/1.jpg","..\/system\/walls\/10.jpg","..\/system\/walls\/11.jpg","..\/system\/walls\/12.jpg","..\/system\/walls\/13.jpg","..\/system\/walls\/14.jpg","..\/system\/walls\/15.jpg","..\/system\/walls\/16.jpg","..\/system\/walls\/17.jpg","..\/system\/walls\/18.jpg","..\/system\/walls\/19.jpg","..\/system\/walls\/2.jpg","..\/system\/walls\/20.jpg","..\/system\/walls\/21.jpg","..\/system\/walls\/22.jpg","..\/system\/walls\/23.jpg","..\/system\/walls\/24.jpg","..\/system\/walls\/25.jpg","..\/system\/walls\/26.jpg","..\/system\/walls\/27.jpg","..\/system\/walls\/3.jpg","..\/system\/walls\/31.jpg","..\/system\/walls\/32.jpg","..\/system\/walls\/4.jpg","..\/system\/walls\/5.jpg","..\/system\/walls\/6.jpg","..\/system\/walls\/7.jpg","..\/system\/walls\/8.jpg","..\/system\/walls\/9.jpg","..\/system\/walls\/28.png","..\/system\/walls\/29.png","..\/system\/walls\/30.png","..\/system\/walls\/33.png"]');
 				$('.s_block_open_content .walls_set_alert .wsa_content .wsac').html('');
-				var cwalls = 0;
-				while(cwalls < walls.length)
+				for(var cwalls = 0; cwalls < walls.length; cwalls++)
 				{
 					var url = walls[cwalls];
 					if(url == android.UI.getCurrentWall())
 					{
 						$('.s_block_open_content .walls_set_alert .wsa_content .wsac').append('\
-							<div class="wall" data="' + android.location_device + url + '" style="background: url(' + android.location_device + url + ') 50% 0% / cover no-repeat rgb(0, 0, 0);">\
+							<div class="wall" data="' + url + '" style="background: url(' + url + ') 50% 0% / cover no-repeat rgb(0, 0, 0);">\
 								<div class="state"><a style="transform: scale(1);"><i class="material-icons">done</i></a></div>\
 							</div>\
 						');
@@ -215,12 +219,11 @@
 					else
 					{
 						$('.s_block_open_content .walls_set_alert .wsa_content .wsac').append('\
-							<div class="wall" data="' + android.location_device + url + '" style="background: url(' + android.location_device + url + ') 50% 0% / cover no-repeat rgb(0, 0, 0);">\
+							<div class="wall" data="' + url + '" style="background: url(' + url + ') 50% 0% / cover no-repeat rgb(0, 0, 0);">\
 								<div class="state"><a><i class="material-icons">done</i></a></div>\
 							</div>\
 						');
 					}
-					cwalls++;
 				}
 				/*$('.s_block_open_content .walls_set_alert .wsa_content .wsac').append('\
 					<div class="wall" data="" style="background: url() 50% 0% / cover no-repeat rgb(0, 0, 0);">\
@@ -242,6 +245,7 @@
 				$('.s_block_open_content .walls_set_alert .wsa_content .wsac').css('bottom','40px');
 				$('.s_block_open_content .walls_set_alert .wsa_content .wsa_controls').css('bottom', '0px');
 			}, 1000);
+		});
 	});
 	$('.s_block_open_content .walls_set_alert .wsa_content .wsa_controls .cansel').click(function(e)
 	{

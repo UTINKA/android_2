@@ -11,11 +11,11 @@ class AndroidBase
 		this.Media = undefined;
 		this.UI = undefined;
 		this.Apps = undefined;
+		this.Modules = undefined;
 		this.Controls = undefined;
 		this.Notifications = undefined;
 		// Configurations
 		this.Wall = undefined;
-		this.RecentAppsView = true;
 		//
 		this.boot_animation_startup = undefined;
 		this.boot_animation_shutdown = undefined;
@@ -26,7 +26,11 @@ class AndroidBase
 		this.PhoneUnLocked = false;
 		this.PhoneState = undefined;
 		// Audio & Media
-		this.AudioVolume = [0.8,0.5,0.8];
+		this.AudioVolume = [1,1,0.5];
+		
+		// System Info
+		this.RealCores = navigator.hardwareConcurrency;
+		this.MaxAppsOpened = undefined;
 		
 		// Geolocation
 		//this.Geolocation = [null,null];
@@ -50,8 +54,8 @@ class AndroidBase
 		}
 		OCRecentApps()
 		{
-			var androidRAView = this.a.RecentAppsView;
 			android.Controls.CurrentScrollApps = 0;
+			//
 			var state = $(".mobile .model .m_display .display_apps .recent_apps").attr('state');
 			if(state == 'false')
 			{
@@ -59,90 +63,154 @@ class AndroidBase
 				var MouseMoveState = $(".mobile .model .m_display .display_apps .recent_apps").attr('mms');
 				if(MouseMoveState == undefined || MouseMoveState == null)
 				{
-					/*$(".mobile .model .m_display .display_apps .recent_apps").mousemove(function(e) 
-					{
-						var pageCoords = "PG( " + e.pageX + ", " + e.pageY + " )";
-						var clientCoords = "CL( " + e.clientX + ", " + e.clientY + " )";
-						console.log(pageCoords);
-						console.log(clientCoords);
-					});*/
 					$(".mobile .model .m_display .display_apps .recent_apps")
 					$(".mobile .model .m_display .display_apps .recent_apps").attr('mms','true');
 				}
 				
-				var zIApp = 1;
+				var filtApps = 1;
+				var AppsCountTra = 1;
+				var AppsCount = android.Apps.init_apps.length;
 				var currentApp = android.Apps.getCurrentAppName();
+				//
+				var objNextTransform = '';
+				var numberPattern = /-?\d+\.?\d*/g;
+				//
 				$(".mobile .model .m_display .display_apps .app").each(function(e)
 				{
 					var obj = $(this);
-					var AppsCount = android.Apps.init_apps.length;
 					obj.attr('state','hided');
-					/*var ostate = obj.attr('hided');
-					if(ostate == 'false')
-					{*/
-						if(obj.attr('app_name') == android.Memory.prototype.getData('HomeApp','Launcher'))
-						{
-							obj.attr('app_count', '1');
-							obj.find('.rc .app_info_up').attr('state','false');
-							obj.find('app_content').css({
-								'background': 'url('+ android.UI.getCurrentWall() +')',
-								'background-position-x': 'center',
-								'background-position-y': 'top',
-								'background-size': 'cover',
-								'background-repeat': 'no-repeat',
-								'background-color': '#000000'
-							});
-						}
-						zIApp++;
+					if(obj.attr('app_name') == currentApp)
+					{
+						obj.css('z-index',(AppsCount+2));
+					}
+					else if(obj.attr('app_name') != currentApp) obj.css('z-index', '1');
+					//
+					if(obj.attr('app_name') == android.Memory.prototype.getData('HomeApp','Launcher')) // Home App
+					{
+						//
+						obj.attr('app_count', filtApps);
 						obj.attr('rs_state','true');
-						if(currentApp == obj.attr('app_name'))
+						obj.find('.rc .app_info_up').attr('state','false');
+						obj.find('app_content').css({
+							'background': 'url('+ android.UI.getCurrentWall() +')',
+							'background-position-x': 'center',
+							'background-position-y': 'top',
+							'background-size': 'cover',
+							'background-repeat': 'no-repeat',
+							'background-color': '#000000'
+						});
+						// Set position
+						obj.attr('lr','-75');
+						obj.attr('ud','0');
+						if(AppsCount == 1) 
 						{
-							var nAppsCount = 1;
-							obj.attr('app_count', '2');
-							$(".mobile .model .m_display .display_apps .app").each(function(e)
-							{
-								if($(this).attr('app_name') != android.Memory.prototype.getData('HomeApp','Launcher'))
-								{
-									nAppsCount++;
-									$(this).attr('app_count', nAppsCount);
-								}
-							});
+							obj.css('transform','scale(0.6) translateX(0%) translateY(0%)');
 						}
-						var AppCount = parseInt(obj.attr('app_count'));
-						//
-						if(currentApp == obj.attr('app_name'))
+						else if(AppsCount > 1) 
 						{
-							obj.css('z-index', '0');
-							if(androidRAView == true)
+							obj.css('transform','scale(0.3) translateX(-75%) translateY(0%)');
+						}
+						//
+						objNextTransform = 'matrix(0.3, 0, 0, 0.3, -75, 0)';
+						objNextTransform = objNextTransform.match(numberPattern); // scaleX[0],skewY[1],skewX[2],scaleY[3],translateX[4],translateY[5]
+						AppsCountTra++; 
+					}
+					else if(obj.attr('app_name') != android.Memory.prototype.getData('HomeApp','Launcher')) // Not Home App
+					{
+						//
+						obj.attr('rs_state','true');
+						obj.attr('app_count', filtApps);
+						// Set position
+						var translateX = String(objNextTransform[4]);
+						var translateY = String(objNextTransform[5]);
+						//
+						if(AppsCountTra > 2)
+						{
+							translateY = (parseInt(translateY)+120);
+							AppsCountTra = 1;
+						}
+						//
+						if(translateX == '-75') // Left
+						{
+							translateX = '75';// Set to Right
+							obj.attr('lr',translateX);
+							obj.attr('ud',translateY);
+							//
+							objNextTransform = 'matrix(0.3, 0, 0, 0.3, ' + translateX + ', ' + translateY + ')';
+							obj.css('transform','scale(0.3) translateX(' + translateX + '%) translateY(' + translateY + '%)');
+							AppsCountTra = 3; 
+						}
+						else if(translateX == '75') // Right
+						{
+							translateX = '-75';// Set to Left
+							obj.attr('lr',translateX);
+							obj.attr('ud',translateY);
+							//
+							objNextTransform = 'matrix(0.3, 0, 0, 0.3, ' + translateX + ', ' + translateY + ')';
+							obj.css('transform','scale(0.3) translateX(' + translateX + '%) translateY(' + translateY + '%)');
+							AppsCountTra = 1; 
+						}
+						// save next position
+						objNextTransform = objNextTransform.match(numberPattern); // scaleX[0],skewY[1],skewX[2],scaleY[3],translateX[4],translateY[5]
+						obj.attr('trX', obj.attr('lr'));
+						obj.attr('trY', obj.attr('ud'));
+					}
+					
+					var IsAppLoaded = obj.find('.rc').attr('state');
+					if(IsAppLoaded == 'false')
+					{
+						// Add Clicks App
+						obj.find('.rc').click(function(e)
+						{
+							var oapp = $(this);
+							android.Media.play(android.Media.SYSTEM_AUDIO, 'system/media/ui/Effect_Tick.mp3');
+							//console.log(obj.attr('app_name') + ' clicked!');
+							android.Controls.CloseRecentApps();
+							var is_app = obj.attr('isapp');
+							if(is_app == 'true')
 							{
-								obj.css('transform','scale(0.7) translateX(0px) perspective(1000px) rotate3d(180,0,0,10deg)');
+								android.Apps.openApp(obj.attr('app_name'), android.Apps.SYSAPP);	
 							}
-							else obj.css('transform','scale(0.7) translateX(0px)');
-						}
-						else if(currentApp != obj.attr('app_name'))
-						{
-							obj.css('z-index', AppCount);
-							if(androidRAView == true)
-							{
-								obj.css('transform','scale(0.7) translateX('+ ( (((AppsCount*100)+(zIApp*10)-AppCount)/AppCount)+0 ) + 'px) perspective(1000px) rotate3d(180,0,0,10deg)');
-							}
-							else obj.css('transform','scale(0.7) translateX('+ ( (((AppsCount*100)+(zIApp*10)-AppCount)/AppCount)+0 ) + 'px)');
-						}
-						//
-						//
-						var isloaded = obj.find('.rc').attr('state');
-						if(isloaded == 'false')
-						{
-							obj.find('.rc').click(function(e)
-							{
-								android.Media.play(android.Media.SYSTEM_AUDIO, 'system/media/ui/Effect_Tick.mp3');
-								//console.log(obj.attr('app_name') + ' clicked!');
-								android.Controls.CloseRecentApps();
-								android.Apps.openApp(obj.attr('app_name'), android.Apps.SYSAPP);
+							else if(is_app == 'false') android.Apps.openApp(obj.attr('app_name'), android.Apps.USERAPP);
+							//
+							$('.mobile .model .m_display .status_bar').css({
+								'background': 'rgba(0, 0, 0, 0)',
+								'backdrop-filter': 'blur(0px)'
 							});
-							obj.find('.rc').attr('state','true');
-						}
-					//}
+							$('.mobile .model .m_display .controls').css({
+								'background': 'rgba(0, 0, 0, 0)',
+								'backdrop-filter': 'blur(0px)'
+							});
+						});
+						obj.find('.rc').attr('state','true');
+					}
+					//
+					var MoveList = 0;
+					$('.mobile .model .m_display .display_apps .recent_apps').bind('mousewheel',function(e, delta)
+					{
+						if(android.Apps.init_apps.length < 2) return;
+						if (delta > 0) MoveList++;
+						else MoveList--;
+						// Update
+						$('.mobile .model .m_display .display_apps .app').each(function(e)
+						{ 
+							var obj = $(this);
+							var objTransMove = String(obj.css('transform'));
+							objTransMove = objTransMove.match(numberPattern); // scaleX[0],skewY[1],skewX[2],scaleY[3],translateX[4],translateY[5]
+							//
+							var MoveTranslateX = obj.attr('lr');
+							var MoveTranslateY = parseInt(objTransMove[5]);
+							var appUD = parseInt(obj.attr('ud'));
+							//	
+							MoveTranslateY = (((MoveList * 20) + delta) + appUD);
+							//
+							obj.css('transform','scale(0.3) translateX(' + MoveTranslateX + '%) translateY(' + MoveTranslateY + '%)');
+							obj.attr('trX', MoveTranslateX);
+							obj.attr('trY', MoveTranslateY);
+						});
+					});
+					//
+					filtApps++;
 				});
 				android.Apps.showed_app = "RecentApps";
 				$(".mobile .model .m_display .display_apps").css('background', 'rgba(0, 0, 0, 0)');
@@ -154,28 +222,11 @@ class AndroidBase
 				{
 					var obj = $(this);
 					obj.attr('state','hided');
-					
-					if(obj.attr('app_name') == android.Memory.prototype.getData('HomeApp','Launcher'))
-					{
-						obj.find('app_content').css({
-							'background': 'unset',
-							'background-position-x': 'unset',
-							'background-position-y': 'unset',
-							'background-size': 'unset',
-							'background-repeat': 'unset',
-							'background-color': 'unset'
-						});
-					}
-					
-					/*var ostate = obj.attr('hided');
-					if(ostate == 'false')
-					{*/
-						obj.attr('rs_state','false');
-						obj.css({
-							'transform': 'scale(1) translateX(0px)',
-							'z-index':'unset'
-						});
-					//}
+					obj.attr('rs_state','false');
+					obj.css({
+						'transform': 'scale(1) translateX(0px)',
+						'z-index':'unset'
+					});
 				});
 			}
 		}
@@ -189,25 +240,8 @@ class AndroidBase
 				{
 					var obj = $(this);
 					obj.attr('state','hided');
-					
-					if(obj.attr('app_name') == android.Memory.prototype.getData('HomeApp','Launcher'))
-					{
-						obj.find('app_content').css({
-							'background': 'unset',
-							'background-position-x': 'unset',
-							'background-position-y': 'unset',
-							'background-size': 'unset',
-							'background-repeat': 'unset',
-							'background-color': 'unset'
-						});
-					}
-					
-					/*var ostate = obj.attr('hided');
-					if(ostate == 'false')
-					{*/
-						obj.attr('rs_state','false');
-						obj.css('transform','scale(1) translateX(0px)');
-					//}
+					obj.attr('rs_state','false');
+					obj.css('transform','scale(1) translateX(0px)');
 				});
 			}
 		}
@@ -408,6 +442,16 @@ class AndroidBase
 			xhr.send();
 		});
 	}
+	
+	Sleep(milliseconds)
+	{
+		const date = Date.now();
+		let currentDate = null;
+		do {
+			currentDate = Date.now();
+		} while (currentDate - date < milliseconds);
+	}
+	
 	UserData = class
 	{
 		constructor()
@@ -421,40 +465,65 @@ class AndroidBase
 		{
 			this.a = android;
 			this.display = display;
-			this.MediaDataPlayer = [];
+			this.MediaDataPlayer = undefined;
 		}
 		setMediaDataPlayer(audio, img_url, audio_author, audio_name, background_color, controls = false)
 		{
-			this.MediaDataPlayer = [audio];
+			if(this.MediaDataPlayer != undefined)
+			{
+				//audio.pause();
+				this.MediaDataPlayer = undefined;
+			}
+			this.MediaDataPlayer = audio;
+			// to global
+			var MediaElement = this.MediaDataPlayer;
+			//
 			$('.mobile .model .m_display .lock_screen center').fadeOut(100, function(e)
 			{
 				$('.mobile .model .m_display .lock_screen .ls_media_data').fadeIn(100, function(e)
 				{
-					$('.mobile .model .m_display .lock_screen').css({
+					// Bg Image
+					$('.mobile .model .m_display .lock_screen .ls_media_data_BGImage').css({
 						'background': background_color,
 						'background-repeat': 'no-repeat',
 						'background-position': 'center',
-						'background-size': '80%',
-						'background-position-y': 'calc(100% * 2 / 2 - 100px)',
-						'background-image': 'url('+img_url+')'
+						'background-size': '200%',
+						'background-position-y': 'calc(0%)',
+						'background-image': 'url(' + img_url + ')'
+					});
+					// Image 
+					$('.mobile .model .m_display .lock_screen .ls_media_data_Image').css({
+						'background': 'rgba(255, 255, 255, 0)',
+						'background-repeat': 'no-repeat',
+						'background-position': 'center',
+						'background-size': 'contain',
+						'background-image': 'url(' + img_url + ')'
 					});
 					$('.mobile .model .m_display .lock_screen .ls_media_data').css('opacity','1');
 					$('.mobile .model .m_display .lock_screen .ls_media_data').find('label').html(audio_name);
 					$('.mobile .model .m_display .lock_screen .ls_media_data').find('text').html(audio_author);
-					$('.mobile .model .m_display .lock_screen .ls_media_data .lsmd_buttons').find('.play_pause').click(function(e)
+					var CreatedClicks = $('.mobile .model .m_display .lock_screen .ls_media_data .lsmd_buttons').attr('mcl');
+					if(CreatedClicks == 'null')
 					{
-						var obj = $(this);
-						if(audio.paused)
+						$('.mobile .model .m_display .lock_screen .ls_media_data .lsmd_buttons').find('.play_pause').click(function(e)
 						{
-							obj.find('i').text('pause');
-							audio.play();
-						}
-						else 
-						{
-							obj.find('i').text('play_arrow');
-							audio.pause();
-						}
-					});
+							var obj = $(this);
+							if(android.UI.MediaDataPlayer != undefined)
+							{
+								if(android.UI.MediaDataPlayer.paused)
+								{
+									obj.find('i').text('pause');
+									android.UI.MediaDataPlayer.play();
+								}
+								else 
+								{
+									obj.find('i').text('play_arrow');
+									android.UI.MediaDataPlayer.pause();
+								}
+							}
+						});
+						$('.mobile .model .m_display .lock_screen .ls_media_data .lsmd_buttons').attr('mcl','set');
+					}
 					if(controls == false)
 					{
 						$('.mobile .model .m_display .lock_screen .ls_media_data .lsmd_buttons').find('.back').css('display','none');
@@ -465,14 +534,12 @@ class AndroidBase
 						$('.mobile .model .m_display .lock_screen .ls_media_data .lsmd_buttons').find('.back').css('display','inline-block');
 						$('.mobile .model .m_display .lock_screen .ls_media_data .lsmd_buttons').find('.next').css('display','inline-block');
 					}
-					if(audio.paused) $('.mobile .model .m_display .lock_screen .ls_media_data .lsmd_buttons').find('.play_pause').find('i').text('play_arrow');
-					else $('.mobile .model .m_display .lock_screen .ls_media_data .lsmd_buttons').find('.play_pause').find('i').text('pause');
 				});
 			});
 		}
 		removeMediaDataPlayer()
 		{
-			this.MediaDataPlayer = [];
+			this.MediaDataPlayer = undefined;
 			$('.mobile .model .m_display .lock_screen center').fadeIn(100, function(e)
 			{
 				$('.mobile .model .m_display .lock_screen .ls_media_data').fadeOut(100, function(e)
@@ -488,14 +555,12 @@ class AndroidBase
 					$('.mobile .model .m_display .lock_screen .ls_media_data').css('opacity','1');
 					$('.mobile .model .m_display .lock_screen .ls_media_data').find('label').html('');
 					$('.mobile .model .m_display .lock_screen .ls_media_data').find('text').html('');
+					$('.mobile .model .m_display .lock_screen .ls_media_data_BGImage').css('background','unset');
+					$('.mobile .model .m_display .lock_screen .ls_media_data_Image').css('background','unset');
 				});
 			});
 		}
 		
-		setStateRecentAppsView(state)
-		{
-			this.a.RecentAppsView = state;
-		}
 		setWall(url)
 		{
 			this.a.Wall = url;
@@ -531,7 +596,7 @@ class AndroidBase
 		}
 		getCurrentWall()
 		{
-			return this.a.Memory.prototype.getData('Wall','system/walls/0.jpg');
+			return this.a.Memory.prototype.getData('Wall', 'system/walls/0.jpg');
 		}
 		getWalls()
 		{
@@ -614,8 +679,169 @@ class AndroidBase
 		}
 		Build(app)
 		{
-			this.a.Media.play(android.Media.NOTYFI_AUDIO, this.sound);
+			var AClass = this.a;
+			var VolTS, VolumeMin = 0.2;
+			var LastVolume = undefined;
+			//
+			if(AClass.Media.volume[2] > 0)
+			{
+				if(AClass.Media.volume[2] >= VolumeMin) 
+				{
+					LastVolume = android.Media.volume[2];
+					//
+					var volToMin = 1.0;
+					while(volToMin != VolumeMin)
+					{
+						android.Sleep(20);
+						volToMin = volToMin-0.1;
+						if(volToMin < VolumeMin) volToMin = VolumeMin;
+						android.Media.volume[2] = volToMin;
+					}
+					AClass.Media.play(AClass.Media.NOTYFI_AUDIO, AClass.Notifications.sound);
+					clearTimeout(VolTS);
+					VolTS = setTimeout(function() 
+					{
+						var volToLast = LastVolume;
+						while(volToMin != volToLast)
+						{
+							android.Sleep(20);
+							volToMin = volToMin+0.1;
+							if(volToMin > volToLast) volToMin = volToLast;
+							android.Media.volume[2] = volToMin;
+						}
+						clearTimeout(VolTS);
+					}, 180);
+				}
+			}
 			return app.NotificationsApp;
+		}
+	}
+	AndroidModules = class
+	{
+		constructor()
+		{
+			this.AllModules = [];
+			this.LoadedModules = [];
+			this.ShowedModule = undefined;
+			this.ClicksCount = 0;
+		}
+		getAllModules()
+		{
+			return this.AllModules;
+		}
+		getLoadedModules()
+		{
+			return this.LoadedModules;
+		}
+		InitModule(module, ActivateControl, ClicksC = 1, callback_Update, callback_SystemControls, callback_Showed, callback_Hided)
+		{
+			var NewModule = class
+			{
+				constructor(module, ActivateControl, ClicksC)
+				{
+					this.module = module;
+					this.UpdateCallBack = callback_Update;
+					this.SystemControlsCallBack = callback_SystemControls;
+					this.Showed = callback_Showed;
+					this.Hided = callback_Hided;
+					this.IsActive = false; // активен в данный момент модуль или нет 
+					this.Activate = ActivateControl; 
+					this.ClicksInActivate = ClicksC; // количество кликов для активации (beta)
+				}
+			}
+			NewModule = new NewModule(module, ActivateControl, ClicksC, callback_Update, callback_SystemControls, callback_Showed, callback_Hided);
+			this.LoadedModules.push(NewModule);
+			console.log('Module Inited: ' + module);
+			return this.LoadedModules.length-1;
+		}
+		ControlShowedModule(key = '')
+		{
+			var cMod = 0;
+			this.ClicksCount++;
+			while(cMod < this.LoadedModules.length)
+			{
+				if(this.LoadedModules[cMod].IsActive == false)
+				{
+					if(this.LoadedModules[cMod].Activate == key)
+					{
+						if(this.LoadedModules[cMod].ClicksInActivate == this.ClicksCount)
+						{
+							this.ClicksCount = 0;
+							this.ShowedModule = this.LoadedModules[cMod].module;
+							this.LoadedModules[cMod].Showed();
+							return true;
+						}
+						else if(this.LoadedModules[cMod].ClicksInActivate != this.ClicksCount)
+						{
+							if(this.ClicksCount > this.LoadedModules[cMod].ClicksInActivate) 
+							{
+								this.ClicksCount = 0;
+							}
+							return false;
+						}
+					}
+				}
+				cMod++;
+			}
+			return false;
+		}
+		ControlsInModulesActive(key = '', call = true)
+		{
+			var cMod = 0;
+			while(cMod < this.LoadedModules.length)
+			{
+				if(this.LoadedModules[cMod].IsActive == true)
+				{
+					if(call == true) this.LoadedModules[cMod].SystemControlsCallBack(key);
+					return true;
+				}
+				cMod++;
+			}
+			return false;
+		}
+		getActiveModule()
+		{
+			var cMod = 0;
+			while(cMod < this.LoadedModules.length)
+			{
+				if(this.LoadedModules[cMod].IsActive == true)
+				{
+					if(this.LoadedModules[cMod].module == this.ShowedModule)
+					{
+						return cMod;
+					}
+				}
+				cMod++;
+			}
+			return false;
+		}
+		ShowedModule(module) // показать модуль если есть возможность ?(null)
+		{
+			var cMod = 0;
+			while(cMod < this.LoadedModules.length)
+			{
+				if(this.LoadedModules[cMod].module == module)
+				{
+					this.ShowedModule = module;
+					this.LoadedModules[cMod].IsActive = true;
+					return this.LoadedModules[cMod].Showed();
+				}
+				cMod++;
+			}
+		}
+		HidedModule(module) // скрыть модуль если есть возможность ?(null)
+		{
+			var cMod = 0;
+			while(cMod < this.LoadedModules.length)
+			{
+				if(this.LoadedModules[cMod].module == module)
+				{
+					this.ShowedModule = undefined;
+					this.LoadedModules[cMod].IsActive = false;
+					return this.LoadedModules[cMod].Hided();
+				}
+				cMod++;
+			}
 		}
 	}
 	AndroidApps = class
@@ -670,19 +896,133 @@ class AndroidBase
 			});
 			if(app_open_now == true)
 			{
+				var is_app_value;
+				if(is_app == 'priv_apps') is_app_value = 'true';
+				else if(is_app == 'apps') is_app_value = 'false';
+				//
+				var Loader_Apps = $('.mobile .model .m_display .display_apps .loader_apps');
+				Loader_Apps.find('.box img').attr('src', android.location_device + 'system/' + is_app + '/' + app_name + '/' + app_name + '.png');
+				if(app_name != android.Memory.prototype.getData('HomeApp','Launcher'))
+				{
+					//Loader_Apps.fadeIn(0);
+				}
+				//
 				apps.append('\
-				<div class="app" app_name="' + app_name + '" state="hided" hided="false" app_count="null">\
+				<div class="app" app_name="' + app_name + '" isapp="' + is_app_value + '" state="hided" hided="false" app_count="null">\
 					<div class="rc" state="false">\
 						<div class="app_info_up">\
 							<img src="">\
-							<label></label>\
 						</div>\
+						<!--div class="app_info_down">\
+							<label>0 Mb.</label>\
+						</div-->\
 					</div>\
 					<style></style>\
 					<app_content></app_content>\
 				</div>');
 				apps.find('.app[app_name=' + app_name + '] app_content').fadeOut(0);
 				apps.find('.app[app_name=' + app_name + ']').attr('app_count', this.init_apps.length+1);
+				// Remover App
+				if(app_name != android.Memory.prototype.getData('HomeApp','Launcher'))
+				{
+					var objNextTransform = '';
+					var numberPattern = /-?\d+\.?\d*/g;
+					var currTrasnform = '';
+					var startTransform = '';
+					//
+					var MouseIsMoved = false;
+					var AppBlockRemove = apps.find('.app[app_name=' + app_name + ']');
+					AppBlockRemove.find('.rc').mousedown(function(e)
+					{
+						currTrasnform = String($(this).parent().css('transform'));
+						startTransform = currTrasnform;
+						//MouseIsMoved = true;
+						$(this).parent().css('transition','0s');
+					});
+					AppBlockRemove.find('.rc').mouseup(function(e)
+					{
+						//MouseIsMoved = false;
+						var objTransform = startTransform.match(numberPattern); // scaleX[0],skewY[1],skewX[2],scaleY[3], translateX[4],translateY[5]
+						//
+						var TranslateX = parseInt(objTransform[4]);
+						var TranslateY = parseInt(objTransform[5]);
+						$(this).parent().css('transform','scale(0.3) translateX(' + TranslateX + '%) translateY(' + TranslateY + '%)');
+						$(this).parent().css('opacity','1');
+						$(this).parent().css('transition','0.5s');
+					});
+					
+					AppBlockRemove.find('.rc').mousemove(function(e) 
+					{
+						if(MouseIsMoved == false) return;
+						//
+						var obj = $(this).parent();
+						var moveX = (e.pageX - (320 / 2) - (92/2));
+						if(moveX < 60 || moveX > 90)
+						{
+							if(moveX < 60)
+							{
+								if(moveX == 59) obj.css('opacity','0.9');
+								else if(moveX == 58) obj.css('opacity','0.8');
+								else if(moveX == 57) obj.css('opacity','0.7');
+								else if(moveX == 56) obj.css('opacity','0.6');
+								else if(moveX == 55) obj.css('opacity','0.5');
+								else if(moveX == 54) obj.css('opacity','0.4');
+								else if(moveX == 53) obj.css('opacity','0.3');
+								else if(moveX == 52) obj.css('opacity','0.2');
+								else if(moveX == 51) obj.css('opacity','0.1');
+								else if(moveX < 50) 
+								{
+									obj.css('opacity','0');
+									android.Apps.closeApp(obj.attr('app_name'));
+									android.Controls.CloseRecentApps();
+									android.Apps.openApp(android.Memory.prototype.getData('HomeApp','Launcher'), android.Apps.SYSAPP);
+									$('.mobile .model .m_display .status_bar').css({
+										'background': 'rgba(0, 0, 0, 0)',
+										'backdrop-filter': 'blur(0px)'
+									});
+									$('.mobile .model .m_display .controls').css({
+										'background': 'rgba(0, 0, 0, 0)',
+										'backdrop-filter': 'blur(0px)'
+									});
+								}
+							}
+							else if(moveX > 90)
+							{
+								if(moveX == 91) obj.css('opacity','0.9');
+								else if(moveX == 92) obj.css('opacity','0.8');
+								else if(moveX == 93) obj.css('opacity','0.7');
+								else if(moveX == 94) obj.css('opacity','0.6');
+								else if(moveX == 95) obj.css('opacity','0.5');
+								else if(moveX == 96) obj.css('opacity','0.4');
+								else if(moveX == 97) obj.css('opacity','0.3');
+								else if(moveX == 98) obj.css('opacity','0.2');
+								else if(moveX == 99) obj.css('opacity','0.1');
+								else if(moveX > 100) 
+								{
+									obj.css('opacity','0');
+									android.Apps.closeApp(obj.attr('app_name'));
+									android.Controls.CloseRecentApps();
+									android.Apps.openApp(android.Memory.prototype.getData('HomeApp','Launcher'), android.Apps.SYSAPP);
+									$('.mobile .model .m_display .status_bar').css({
+										'background': 'rgba(0, 0, 0, 0)',
+										'backdrop-filter': 'blur(0px)'
+									});
+									$('.mobile .model .m_display .controls').css({
+										'background': 'rgba(0, 0, 0, 0)',
+										'backdrop-filter': 'blur(0px)'
+									});
+								}
+							}
+						}
+						else if(moveX > 60 || moveX < 90)
+						{
+							obj.css('opacity','1');
+						}
+						var TranslateY = obj.attr('trY');
+						obj.css('transform','scale(0.3) translateX(' + moveX + '%) translateY(' + TranslateY + '%)');
+					});
+				}
+				//
 				if(is_app == 'priv_apps')
 				{
 					android.GetData(android.location_device + 'system/priv_apps/' + app_name + '/' + app_name + '.txt').then(result => 
@@ -691,14 +1031,20 @@ class AndroidBase
 						console.log(data);
 						if(data.color != undefined && data.color != '')
 						{
-							$('.mobile .model .m_display .display_apps').css('background', data.color);
+							if(app_name != android.Memory.prototype.getData('HomeApp','Launcher'))
+							{
+								$('.mobile .model .m_display .display_apps .app[app_name=' + app_name + '] app_content').css('background', data.color);
+								$('.mobile .model .m_display .display_apps').css('background', 'rgba(0, 0, 0, 0)');
+							}
 							if(data.color != 'transparent')
 							{
 								$('.mobile .model .m_display .up_block .upb_info_block, .mobile .model .m_display .up_block .upb_info_notify_min').css('background', data.color);
+								Loader_Apps.css('background', data.color);
 							}
 							else if(data.color == 'transparent')
 							{
 								$('.mobile .model .m_display .up_block .upb_info_block, .mobile .model .m_display .up_block .upb_info_notify_min').css('background', '#0062cb');
+								Loader_Apps.css('background','transparent');
 							}
 							apps.find('.app[app_name=' + app_name + '] app_content').fadeIn(600);
 						}
@@ -720,8 +1066,10 @@ class AndroidBase
 							//apps.find('.app[app_name=' + app_name + ']').fadeIn(1000);
 							apps.find('.app[app_name=' + app_name + ']').attr('hided', data.hided);
 							
-							apps.find('.app[app_name=' + app_name + ']').find('.rc .app_info_up label').html(data.app_name);
+							//apps.find('.app[app_name=' + app_name + ']').find('.rc .app_info_up label').html(data.app_name);
 							apps.find('.app[app_name=' + app_name + ']').find('.rc .app_info_up img').attr('src', android.location_device + 'system/priv_apps/' + app_name + '/' + app_name + '.png');
+							// App Memory
+							//apps.find('.app[app_name=' + app_name + ']').find('.rc .app_info_down label').html('' + android.Numbers.prototype.RandomInt(app_name.length*100/2, ((app_name.length*1000/2)+(app_name.length*100/2))) + 'Mb');
 						});	
 					});
 				}
@@ -733,14 +1081,20 @@ class AndroidBase
 						console.log(data);
 						if(data.color != undefined && data.color != '')
 						{
-							$('.mobile .model .m_display .display_apps').css('background', data.color);
+							if(app_name != android.Memory.prototype.getData('HomeApp','Launcher'))
+							{
+								$('.mobile .model .m_display .display_apps .app[app_name=' + app_name + '] app_content').css('background', data.color);
+								$('.mobile .model .m_display .display_apps').css('background', 'rgba(0, 0, 0, 0)');
+							}
 							if(data.color != 'transparent')
 							{
 								$('.mobile .model .m_display .up_block .upb_info_block, .mobile .model .m_display .up_block .upb_info_notify_min').css('background', data.color);
+								Loader_Apps.css('background', data.color);
 							}
 							else if(data.color == 'transparent')
 							{
 								$('.mobile .model .m_display .up_block .upb_info_block, .mobile .model .m_display .up_block .upb_info_notify_min').css('background', '#0062cb');
+								Loader_Apps.css('background','transparent');
 							}
 							apps.find('.app[app_name=' + app_name + '] app_content').fadeIn(600);
 						}
@@ -762,11 +1116,18 @@ class AndroidBase
 							//apps.find('.app[app_name=' + app_name + ']').fadeIn(1000);
 							apps.find('.app[app_name=' + app_name + ']').attr('hided', data.hided);
 							
-							apps.find('.app[app_name=' + app_name + ']').find('.rc .app_info_up label').html(data.app_name);
+							//apps.find('.app[app_name=' + app_name + ']').find('.rc .app_info_up label').html(data.app_name);
 							apps.find('.app[app_name=' + app_name + ']').find('.rc .app_info_up img').attr('src', android.location_device + 'system/apps/' + app_name + '/' + app_name + '.png');
+							// App Memory
+							//apps.find('.app[app_name=' + app_name + ']').find('.rc .app_info_down label').html('' + android.Numbers.prototype.RandomInt(app_name.length*100/2, ((app_name.length*1000/2)+(app_name.length*100/2))) + 'Mb');
 						});	
 					});
 				}
+				var SleepTLA = setTimeout(function()
+				{
+					clearTimeout(SleepTLA);
+					Loader_Apps.fadeOut(500);
+				}, 500);
 			}
 			else if(app_open_now == false)
 			{
@@ -777,7 +1138,11 @@ class AndroidBase
 						var data = android.Data.prototype.DataToObject(result);
 						if(data.color != undefined && data.color != '')
 						{
-							$('.mobile .model .m_display .display_apps').css('background', data.color);
+							if(app_name != android.Memory.prototype.getData('HomeApp','Launcher'))
+							{
+								$('.mobile .model .m_display .display_apps .app[app_name=' + app_name + '] app_content').css('background', data.color);
+								$('.mobile .model .m_display .display_apps').css('background', 'rgba(0, 0, 0, 0)');
+							}
 							if(data.color != 'transparent')
 							{
 								$('.mobile .model .m_display .up_block .upb_info_block, .mobile .model .m_display .up_block .upb_info_notify_min').css('background', data.color);
@@ -797,7 +1162,11 @@ class AndroidBase
 						var data = android.Data.prototype.DataToObject(result);
 						if(data.color != undefined && data.color != '')
 						{
-							$('.mobile .model .m_display .display_apps').css('background', data.color);
+							if(app_name != android.Memory.prototype.getData('HomeApp','Launcher'))
+							{
+								$('.mobile .model .m_display .display_apps .app[app_name=' + app_name + '] app_content').css('background', data.color);
+								$('.mobile .model .m_display .display_apps').css('background', 'rgba(0, 0, 0, 0)');
+							}
 							if(data.color != 'transparent')
 							{
 								$('.mobile .model .m_display .up_block .upb_info_block, .mobile .model .m_display .up_block .upb_info_notify_min').css('background', data.color);
@@ -820,7 +1189,7 @@ class AndroidBase
 			this.showed_app = app_name;
 			apps.attr('showed', this.showed_app);
 		}
-		InitApp(app_name, callback_Update, callback_SystemControls, callback_OpenApp, callback_HidedApp, callback_ClosedApp)
+		InitApp(app_name, callback_Update, callback_SystemControls, callback_OpenApp, callback_HidedApp, callback_ClosedApp, callback_UnLockedScreen)
 		{
 			var check_app = 0;
 			while(check_app < this.init_apps.length)
@@ -843,10 +1212,11 @@ class AndroidBase
 					this.AppOpen = callback_OpenApp;
 					this.AppHided = callback_HidedApp;
 					this.AppClosed = callback_ClosedApp;
+					this.UnLockedScreen = callback_UnLockedScreen;
 					this.NotificationsApp = [];
 				}
 			}
-			app = new app(app_name, callback_Update, callback_SystemControls, callback_OpenApp, callback_HidedApp, callback_ClosedApp);
+			app = new app(app_name, callback_Update, callback_SystemControls, callback_OpenApp, callback_HidedApp, callback_ClosedApp, callback_UnLockedScreen);
 			this.init_apps.push(app);
 			app.AppOpen();
 			return app;
@@ -924,6 +1294,27 @@ class AndroidBase
 				}
 				return;
 			}
+		}
+		UnLokedScreenIsApp(current_app_name, LockedState)
+		{
+			var cApp = 0;
+			while(cApp < this.init_apps.length)
+			{
+				if(this.init_apps[cApp].app_name == current_app_name)
+				{
+					var Screen = class
+					{
+						constructor()
+						{
+							this.IsLocked = undefined;
+						}
+					}
+					Screen.IsLocked = LockedState;
+					return this.init_apps[cApp].UnLockedScreen(Screen);
+				}
+				cApp++;
+			}
+			
 		}
 		getCurrentApp()
 		{
@@ -1070,7 +1461,7 @@ let android = new AndroidBase();
 android.Controls = new android.SysControls(android);
 android.Folders = new android.UserData();
 
-function UpdateSystem(UI)
+function UpdateSystem()
 {
 	// Date
 	var Day = android.DateTime.prototype.getDayOfWeek();
@@ -1096,15 +1487,28 @@ function UpdateSystem(UI)
 	ls_td.find('label').text(Hours + ':' + Minutes);
 	ls_td.find('text').text(Day + ' ' + MonthName + ' ' + Year);
 	
+	// lock_screen media elements 
+	if(android.UI.MediaDataPlayer != undefined)
+	{
+		if(android.UI.MediaDataPlayer.paused) 
+		{
+			$('.mobile .model .m_display .lock_screen .ls_media_data .lsmd_buttons').find('.play_pause').find('i').text('play_arrow');
+		}
+		else
+		{
+			$('.mobile .model .m_display .lock_screen .ls_media_data .lsmd_buttons').find('.play_pause').find('i').text('pause');
+		}
+	}
+					
 	//App
 	android.Apps.UpdateInApps();
-	// MDP
-	var Audio = android.UI.MediaDataPlayer[0];
-	if(Audio != null && Audio != undefined)
-	{
-		if(Audio.paused) $('.mobile .model .m_display .lock_screen .ls_media_data .lsmd_buttons').find('.play_pause').find('i').text('play_arrow');
-		else $('.mobile .model .m_display .lock_screen .ls_media_data .lsmd_buttons').find('.play_pause').find('i').text('pause');
-	}
+	
+	// System Mem in real cores
+	var Cores = android.RealCores;
+	var MemoryInCores = parseInt((1024*Cores)/600);
+	android.MaxAppsOpened = MemoryInCores;
+	//console.log(android.MaxAppsOpened);
+	
 	
 	android.Timers(true, UpdateSystem);
 }
@@ -1114,32 +1518,119 @@ function UpdateSystem(UI)
 $(document).ready(function() 
 {
 	android.Apps = new android.AndroidApps();
-	
-	android.Apps.user_apps = [];
+	android.Modules = new android.AndroidModules();
+	// 
+	// если нужна динамика удаляем код ниже
+	android.GetData(android.location_device).then(result => 
+	{
+		var res = android.Data.prototype.DataToObject('["LoadMusic"]');
+		if(res != "")
+		{
+			android.Apps.user_apps = res;
+			var usallapp = 0;
+			while(usallapp < android.Apps.user_apps.length)
+			{
+				android.Apps.all_apps.push(android.Apps.user_apps[usallapp]);
+				usallapp++;
+			}
+		}
+	});
 	//
-	var appsAllA = android.Data.prototype.DataToObject('["Launcher","Music","Settings"]');
-	var usallapp = 0;
-	android.Apps.priv_apps = appsAllA;
-	while(usallapp < appsAllA.length)
+	android.GetData(android.location_device).then(result => 
 	{
-		android.Apps.all_apps.push(appsAllA[usallapp]);
-		usallapp++;
-	}
+		var res = android.Data.prototype.DataToObject('["AppStore", "Launcher", "Settings"]');
+		if(res != "")
+		{
+			android.Apps.priv_apps = res;
+			var usallapp = 0;
+			while(usallapp < android.Apps.priv_apps.length)
+			{
+				android.Apps.all_apps.push(android.Apps.priv_apps[usallapp]);
+				usallapp++;
+			}
+		}
+	});
 	// Hideh Priv Apps 
-	var appsHidePA = android.Data.prototype.DataToObject('[{"app_name":"Launcher","color":"transparent","hided":"true"}]');
-	usallapp = 0;
-	while(usallapp < appsHidePA.length)
+	android.GetData(android.location_device).then(result => 
 	{
-		android.Apps.hided_priv_apps.push(android.Data.prototype.DataToObject(appsHidePA[usallapp]));
-		usallapp++;
-	}
+		var result = android.Data.prototype.DataToObject('[\
+			{app_name: "App Store", color: "#006c4a", hided: "false"},\
+			{app_name: "Launcher", color: "transparent", hided: "true"},\
+			{app_name: "Настройки", color: "#0063cc", hided: "false"}\
+		]');
+		var usallapp = 0;
+		while(usallapp < result.length)
+		{
+			android.Apps.hided_priv_apps.push(android.Data.prototype.DataToObject(result[usallapp]));
+			usallapp++;
+		}
+	});
+	/*
+		Внимание! Не работает на github'e!
+		Код ниже выполняет динамическую загрузку приложений и модулей
+		Код выше этого комментария удаляйте если будете использовать динамическую загрузку
+	*/
+	/*android.GetData(android.location_device + 'php/apps.php?getApps').then(result => 
+	{
+		var res = android.Data.prototype.DataToObject(result);
+		if(res != "")
+		{
+			android.Apps.user_apps = res;
+			var usallapp = 0;
+			while(usallapp < android.Apps.user_apps.length)
+			{
+				android.Apps.all_apps.push(android.Apps.user_apps[usallapp]);
+				usallapp++;
+			}
+		}
+	});
+	//
+	android.GetData(android.location_device + 'php/apps.php?getPApps').then(result => 
+	{
+		var res = android.Data.prototype.DataToObject(result);
+		if(res != "")
+		{
+			android.Apps.priv_apps = res;
+			var usallapp = 0;
+			while(usallapp < android.Apps.priv_apps.length)
+			{
+				android.Apps.all_apps.push(android.Apps.priv_apps[usallapp]);
+				usallapp++;
+			}
+		}
+	});
+	// Hideh Priv Apps 
+	android.GetData(android.location_device + 'php/apps.php?getPAppsHided').then(result => 
+	{
+		var result = android.Data.prototype.DataToObject(result);
+		var usallapp = 0;
+		while(usallapp < result.length)
+		{
+			android.Apps.hided_priv_apps.push(android.Data.prototype.DataToObject(result[usallapp]));
+			usallapp++;
+		}
+	});
+	// Load Modules
+	android.GetData(android.location_device + 'php/modules.php?getModules').then(result => 
+	{
+		var result = android.Data.prototype.DataToObject(result);
+		var allmod = 0;
+		while(allmod < result.length)
+		{
+			android.Modules.AllModules.push(result[allmod]);
+			console.log('Module Loaded: ' + result[allmod]);
+			//
+			$('body').append('<script type="text/javascript" src="js/modules/' + result[allmod] + '/' + result[allmod] + '.js"></script>');
+			$('body').append('<link rel="stylesheet" href="js/modules/' + result[allmod] + '/style.css" type="text/css">');
+			allmod++;
+		}
+	});*/
 	//
 	//
 	// Start Home App
 	android.Apps.openApp(android.Memory.prototype.getData('HomeApp','Launcher'),android.Apps.SYSAPP);
 	// 
 	android.UI = new android.Interface(android, $('.mobile .model .m_display'));
-	var AUI = android.UI;
 	android.UI.setWall(android.Memory.prototype.getData('Wall','system/walls/0.jpg'));
 	//
 	var Avolume = android.Memory.prototype.getData('AudioVolume','1,1,0.5').split(',');
@@ -1151,7 +1642,7 @@ $(document).ready(function()
 	//
 	android.Notifications = new android.NotificationsBase(android);
 	//
-	android.Timers(true, UpdateSystem(AUI));
+	android.Timers(true, UpdateSystem);
 	//
 	android.UI.reload_ripple();
 });
@@ -1172,19 +1663,3 @@ if(android.Memory.prototype.getData('PhoneTimeInStarted') != null && android.Mem
 	android.PhoneTimeInStarted = android.Memory.prototype.getData('PhoneTimeInStarted');
 }
 else android.PhoneTimeInStarted = undefined;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

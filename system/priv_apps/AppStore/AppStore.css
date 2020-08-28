@@ -1,0 +1,76 @@
+.asapp_header{
+	position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #00875d;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+    color: #fff;
+    width: 100%;
+    height: 50px;
+    padding: 20px 0 20px 0;
+    z-index: 20;
+	transition: 0.3s;
+}
+.asapp_header input[type=text]{
+	position: absolute;
+    display: block;
+    top: 10px;
+    left: 0;
+    right: 0;
+    border: 0;
+    outline: 0;
+    background: rgba(0, 0, 0, 0.1);
+    width: calc(100% - 40px);
+    height: 20px;
+    margin: 0 auto;
+    padding: 4px;
+    border-radius: 4px;
+	color: #fff;
+    text-align: center;
+    font-family: Product Sans;
+}
+
+.asapp_header .buttons{
+	position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0px 20px rgba(255, 255, 255, 0.3);
+}
+.asapp_header .buttons a[state=active]{
+	display: inline-block;
+    background: rgba(255, 255, 255, 0.2);
+    width: auto;
+    height: 37px;
+    border-bottom: 3px solid #fff;
+}
+.asapp_header .buttons a{
+	display: inline-block;
+    background: rgba(255, 255, 255, 0);
+    width: auto;
+    height: 40px;
+    border-bottom: 0px solid #fff;
+}
+.asapp_header .buttons a i{
+	padding: 8px;
+    vertical-align: top;
+}
+
+
+.as_app{
+	position: relative;
+	top: 0;
+	width: 100%;
+    height: calc(100% - 90px);
+    background: #eee;
+	overflow-y: auto;
+	transition: 0.2s;
+}
+.as_app .s_content{
+	width: 100%;
+    margin: 0 auto;
+    height: auto;
+}

@@ -4,7 +4,7 @@ String.prototype.replaceAt = function(index, replacement) {
 
 $(document).ready(function() 
 {
-	var 
+	var
 		off_screen = $('.mobile .model .m_display .off_screen'),
 		bootanimation = $('.mobile .model .m_display .bootanimation'),
 		mcontrols = $('.mobile .model .m_display .controls'),
@@ -17,33 +17,11 @@ $(document).ready(function()
 
 	notifiDis.fadeOut(0);
 	
-	/*app.swipe(
-	{
-		swipe:function(event, direction, distance, duration, fingerCount, fingerData) 
-		{
-			if(direction == 'down')
-			{
-				notifiDis.fadeIn(500);
-			}
-		},
-		threshold:250
-	});*/
 	app.find('recent_apps').scroll(function()
 	{
 		alert('Элемент foo был прокручен... скроллирован... ну как там это называется то?!');
 	});
 	
-	/*notifiDis.swipe(
-	{
-		swipe:function(event, direction, distance, duration, fingerCount, fingerData) 
-		{
-			if(direction == 'up')
-			{
-				notifiDis.fadeOut(500);
-			}
-		},
-		threshold:250
-	});*/
 
 	var 
 		ls_lock_icon = false
@@ -63,14 +41,22 @@ $(document).ready(function()
 				obj.attr('state','false');
 				setTimeout(function()
 				{
+					obj.find('i').text('close');
 					android.Controls.CloseRecentApps();
 					android.Apps.openApp(android.Memory.prototype.getData('HomeApp','Launcher'), android.Apps.SYSAPP);
-					obj.find('i').text('close');
-				}, 1500);
-			}, 2000);
+					$('.mobile .model .m_display .status_bar').css({
+						'background': 'rgba(0, 0, 0, 0)',
+						'backdrop-filter': 'blur(0px)'
+					});
+					$('.mobile .model .m_display .controls').css({
+						'background': 'rgba(0, 0, 0, 0)',
+						'backdrop-filter': 'blur(0px)'
+					});
+				}, 1000);
+			}, 500);
 		}, 500);
 	});
-	app.find('.recent_apps').on('mousewheel', function(e) 
+	/*app.find('.recent_apps').on('mousewheel', function(e) 
 	{
 		var state_scroll = e.deltaY;
 		var pl = android.Controls.ScrollApps;
@@ -105,7 +91,7 @@ $(document).ready(function()
 				
 			}
 		});
-	});
+	});*/
 
 	// global
 	$('body').mousemove(function(e)
@@ -116,20 +102,23 @@ $(document).ready(function()
 		{
 			var move = (mouseY-40)
 			mlock_screen.css('opacity', move/600);
+			mlock_screen.css('backdrop-filter', 'blur(' + move/30 + 'px)');
 			mlock_screen.find('center').css('transform', 'scale(' + move/600 + ')');
-			if(move <= 310)
+			if(move <= 150)
 			{
 				mlock_screen.find('center').css('transform','scale(0)');
+				mlock_screen.css('backdrop-filter', 'blur(0px)');
 				mlock_screen.fadeOut(50);
 				ls_lock_icon = false, android.PhoneUnLocked = true;
 				//
 				mcontrols.css('bottom','0');
 				app.find('.app').each(function(e)
 				{
-					$(this).css('bottom','40px');
+					$(this).css('bottom','0px');
 				});
 				//
 				android.Media.play(android.Media.SYSTEM_AUDIO, 'system/media/ui/UnLock.mp3');
+				android.Apps.UnLokedScreenIsApp(android.Apps.getCurrentAppName(), false);
 			}
 			else if(move >= 549) 
 			{
@@ -137,6 +126,7 @@ $(document).ready(function()
 				move = 550, android.PhoneUnLocked = false;
 				mlock_screen.find('center').css('transform','scale(1)');
 				mlock_screen.css('opacity','1');
+				mlock_screen.css('backdrop-filter', 'blur(20px)');
 			}
 		}
 	});
@@ -256,12 +246,25 @@ $(document).ready(function()
 					{
 						$(this).css('bottom','0');
 					});
-					//
 					mlock_screen.fadeIn(0, function()
 					{
 						mlock_screen.css('opacity', 1);
+						mlock_screen.css('backdrop-filter', 'blur(20px)');
 						mlock_screen.find('center').css('transform','scale(1)');
 					});
+					// Hide notify display
+					var NotifyDisplay = $('.mobile .model .m_display .up_block');
+					if(NotifyDisplay.height() > 100)
+					{
+						NotifyDisplay.css(
+						{
+							'opacity': '0',
+							'height': '0px',
+							'display': 'unset'
+						});
+						$('.mobile .model .m_display .status_bar').css('opacity','1');
+					}
+					android.Apps.UnLokedScreenIsApp(android.Apps.getCurrentAppName(), true);
 				});
 			}
 		}
@@ -300,12 +303,24 @@ $(document).ready(function()
 					{
 						$(this).css('bottom','0');
 					});
-					//
 					mlock_screen.fadeIn(0, function()
 					{
 						mlock_screen.css('opacity', 1);
 						mlock_screen.find('center').css('transform','scale(1)');
 					});
+					// Hide notify display
+					var NotifyDisplay = $('.mobile .model .m_display .up_block');
+					if(NotifyDisplay.height() > 100)
+					{
+						NotifyDisplay.css(
+						{
+							'opacity': '0',
+							'height': '0px',
+							'display': 'unset'
+						});
+						$('.mobile .model .m_display .status_bar').css('opacity','1');
+					}
+					android.Apps.UnLokedScreenIsApp(android.Apps.getCurrentAppName(), true);
 				});
 			}
 		}
@@ -323,17 +338,3 @@ $(document).ready(function()
 		ls_lock_icon = true;
 	});
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
